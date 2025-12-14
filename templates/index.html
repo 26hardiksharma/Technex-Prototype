@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autonomous Orbital Debris Collision Avoidance System</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>🛰️ Autonomous Orbital Debris Collision Avoidance System</h1>
+            <p class="tagline">Edge-AI for Real-Time Satellite Safety</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Status Bar -->
+        <div id="status-bar" class="status-bar">
+            <span id="status-indicator">⚠️ Loading...</span>
+            <span id="model-status"></span>
+        </div>
+
+        <!-- Key Metrics Banner -->
+        <div class="metrics-banner">
+            <div class="metric-card">
+                <div class="metric-value" id="speedup-metric">600x</div>
+                <div class="metric-label">Faster than Ground Control</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="latency-metric">&lt;1ms</div>
+                <div class="metric-label">Decision Latency</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="model-size-metric">44KB</div>
+                <div class="metric-label">Model Size</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="success-metric">100%</div>
+                <div class="metric-label">Success Rate (Demo)</div>
+            </div>
+        </div>
+
+        <!-- Control Panel -->
+        <div class="panel">
+            <h2>🎮 Control Panel</h2>
+            <div class="controls">
+                <div class="control-group">
+                    <label>Scenario Type:</label>
+                    <select id="scenario-select">
+                        <option value="random">Random Encounter</option>
+                        <option value="head_on">Head-On Collision Course</option>
+                        <option value="crossing">Crossing Trajectory</option>
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <label>
+                        <input type="checkbox" id="use-ai" checked>
+                        Use AI Avoidance
+                    </label>
+                </div>
+
+                <div class="button-group">
+                    <button id="run-btn" class="btn btn-primary">▶️ Run Scenario</button>
+                    <button id="compare-btn" class="btn btn-secondary">📊 Compare AI vs No-AI</button>
+                    <button id="benchmark-btn" class="btn btn-secondary">⚡ Benchmark Inference</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Visualization Area -->
+        <div class="panel">
+            <h2>📊 Live Visualization</h2>
+            <div id="visualization-container">
+                <div id="trajectory-plot" style="width: 100%; min-height: 500px;"></div>
+                <div id="distance-plot" style="width: 100%; min-height: 400px;"></div>
+            </div>
+        </div>
+
+        <!-- Results Panel -->
+        <div class="panel" id="results-panel" style="display: none;">
+            <h2>📈 Results</h2>
+            <div class="results-grid">
+                <div class="result-item">
+                    <span class="result-label">Minimum Distance:</span>
+                    <span class="result-value" id="result-distance">-</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Collision:</span>
+                    <span class="result-value" id="result-collision">-</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Success:</span>
+                    <span class="result-value" id="result-success">-</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Fuel Used:</span>
+                    <span class="result-value" id="result-fuel">-</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Duration:</span>
+                    <span class="result-value" id="result-duration">-</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Steps:</span>
+                    <span class="result-value" id="result-steps">-</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparison Panel -->
+        <div class="panel" id="comparison-panel" style="display: none;">
+            <h2>⚔️ AI vs No-AI Comparison</h2>
+            <div id="comparison-plot"></div>
+            <div class="comparison-results">
+                <div class="comparison-col">
+                    <h3>🤖 With AI</h3>
+                    <div id="ai-results"></div>
+                </div>
+                <div class="comparison-col">
+                    <h3>🚫 Without AI (Coast)</h3>
+                    <div id="no-ai-results"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Benchmark Panel -->
+        <div class="panel" id="benchmark-panel" style="display: none;">
+            <h2>⚡ Edge-AI Performance</h2>
+            <div class="benchmark-grid">
+                <div class="benchmark-item">
+                    <div class="benchmark-label">Mean Latency</div>
+                    <div class="benchmark-value" id="bench-mean">-</div>
+                </div>
+                <div class="benchmark-item">
+                    <div class="benchmark-label">P95 Latency</div>
+                    <div class="benchmark-value" id="bench-p95">-</div>
+                </div>
+                <div class="benchmark-item">
+                    <div class="benchmark-label">P99 Latency</div>
+                    <div class="benchmark-value" id="bench-p99">-</div>
+                </div>
+                <div class="benchmark-item highlight">
+                    <div class="benchmark-label">Speedup vs Ground Control</div>
+                    <div class="benchmark-value" id="bench-speedup">-</div>
+                </div>
+            </div>
+            <div class="benchmark-comparison">
+                <h3>⏱️ Reaction Distance Comparison</h3>
+                <p>At 50 m/s relative velocity:</p>
+                <div class="comparison-bars">
+                    <div class="bar-item">
+                        <span class="bar-label">Ground Control (600ms):</span>
+                        <div class="bar ground-bar" style="width: 100%;">
+                            <span class="bar-value">30.0 m</span>
+                        </div>
+                    </div>
+                    <div class="bar-item">
+                        <span class="bar-label">Edge-AI (<1ms):</span>
+                        <div class="bar edge-bar" style="width: 0.2%;">
+                            <span class="bar-value" id="edge-distance">0.05 m</span>
+                        </div>
+                    </div>
+                </div>
+                <p class="highlight-text">✨ Edge-AI provides <span id="safety-margin">29.95m</span> additional safety margin!</p>
+            </div>
+        </div>
+
+        <!-- Info Panel -->
+        <div class="panel info-panel">
+            <h2>ℹ️ About This System</h2>
+            <div class="info-content">
+                <div class="info-section">
+                    <h3>The Problem: Kessler Syndrome</h3>
+                    <p>Space debris threatens all satellites in Low Earth Orbit. A single collision can trigger a cascade effect, destroying thousands of satellites. Current ground-based tracking is too slow for real-time avoidance.</p>
+                </div>
+                <div class="info-section">
+                    <h3>The Solution: Autonomous Edge-AI</h3>
+                    <p>Our system uses reinforcement learning to enable satellites to make autonomous collision avoidance decisions in milliseconds, without waiting for ground control commands.</p>
+                </div>
+                <div class="info-section">
+                    <h3>Key Innovations</h3>
+                    <ul>
+                        <li><strong>Real-Time:</strong> Sub-millisecond inference on satellite hardware</li>
+                        <li><strong>Autonomous:</strong> No ground-in-the-loop required</li>
+                        <li><strong>Fuel-Efficient:</strong> Learns optimal maneuvers</li>
+                        <li><strong>Deployable:</strong> 44KB model runs on embedded systems</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>Built for TnX Hackathon 2025 | Autonomous Orbital Debris Collision Avoidance System</p>
+            <p>🚀 Saving satellites, one decision at a time</p>
+        </div>
+    </footer>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

@@ -86,6 +86,21 @@ pip install -r requirements.txt
 python src/dynamics/orbital_mechanics.py
 ```
 
+### Start the Web Demo
+
+```bash
+# Activate your virtualenv first if you created one
+# .venv\Scripts\activate   # Windows
+# source venv/bin/activate  # macOS/Linux
+
+# Launch the Flask demo (uses canned trajectories if no model is present)
+python app.py
+```
+
+- Open http://localhost:5000 in your browser.
+- Choose a collision example and toggle AI on/off to show judges how the avoidance behaves.
+- In demo mode (no trained model), all examples still run with pre-baked trajectories for instant showcase.
+
 ### Full Installation
 
 ```bash

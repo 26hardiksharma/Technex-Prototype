@@ -1,4 +1,5 @@
 // Main JavaScript for Flask Demo App
+console.log('🚀 App.js loaded - Collision detection enabled! Version: 2.0');
 
 // Check system status on load
 async function checkStatus() {
@@ -56,6 +57,9 @@ async function runScenario() {
         
         // Animate trajectory in real-time
         runBtn.textContent = '🎬 Animating...';
+        console.log('Full response data:', data);
+        console.log('Trajectory object:', data.trajectory);
+        console.log('Trajectory.satellite exists?', data.trajectory?.satellite);
         plotTrajectory(data.trajectory, data.metrics);
 
         // Also auto-run comparison and benchmark for the chosen scenario
@@ -78,11 +82,27 @@ function displayResults(data) {
     
     const metrics = data.metrics;
     
-    document.getElementById('result-distance').textContent = `${metrics.min_distance.toFixed(1)} m`;
-    document.getElementById('result-distance').className = metrics.collision ? 'result-value danger' : 'result-value success';
+    const isCollision = metrics.collision || metrics.min_distance < 75;
+    const distanceText = isCollision && metrics.min_distance < 75 ? `${metrics.min_distance.toFixed(1)} m 💥` : `${metrics.min_distance.toFixed(1)} m`;
+    document.getElementById('result-distance').textContent = distanceText;
+    document.getElementById('result-distance').className = isCollision ? 'result-value danger' : 'result-value success';
     
-    document.getElementById('result-collision').textContent = metrics.collision ? '❌ Yes' : '✅ No';
-    document.getElementById('result-collision').className = metrics.collision ? 'result-value danger' : 'result-value success';
+    // Show collision alert banner
+    const collisionAlert = document.getElementById('collision-alert');
+    if (collisionAlert) {
+        collisionAlert.style.display = isCollision ? 'block' : 'none';
+    }
+    
+    // Log collision status for debugging  
+    if (isCollision) {
+        console.log('🚨 COLLISION DETECTED! Min Distance:', metrics.min_distance, 'm');
+        console.log('💥 Satellite destroyed at collision!');
+    } else {
+        console.log('✅ Safe passage - Min Distance:', metrics.min_distance, 'm');
+    }
+    
+    document.getElementById('result-collision').textContent = isCollision ? '💥 COLLISION!' : '✅ No';
+    document.getElementById('result-collision').className = isCollision ? 'result-value danger' : 'result-value success';
     
     document.getElementById('result-success').textContent = metrics.success ? '✅ Yes' : '❌ No';
     document.getElementById('result-success').className = metrics.success ? 'result-value success' : 'result-value danger';
@@ -95,6 +115,24 @@ function displayResults(data) {
 
 // Plot trajectory with animation
 function plotTrajectory(trajectory, metrics, animate = true) {
+    // Safety check for invalid trajectory
+    console.log('plotTrajectory called with:', { trajectory, metrics });
+    
+    if (!trajectory) {
+        console.error('Trajectory is null or undefined');
+        return;
+    }
+    
+    if (!trajectory.satellite) {
+        console.error('trajectory.satellite is undefined. Trajectory keys:', Object.keys(trajectory));
+        return;
+    }
+    
+    if (!Array.isArray(trajectory.satellite)) {
+        console.error('trajectory.satellite is not an array:', typeof trajectory.satellite);
+        return;
+    }
+    
     const collisionRadius = 75;
     const safeDistance = 500;
     
@@ -290,6 +328,18 @@ async function fetchAndShowComparison(scenarioType) {
 
 // Display comparison results
 function displayComparison(data) {
+    // Safety checks for missing data
+    if (!data || !data.ai || !data.no_ai) {
+        console.error('Invalid comparison data:', data);
+        return;
+    }
+    
+    if (!data.ai.trajectory || !data.ai.trajectory.satellite || 
+        !data.no_ai.trajectory || !data.no_ai.trajectory.satellite) {
+        console.error('Missing trajectory data in comparison:', data);
+        return;
+    }
+    
     const panel = document.getElementById('comparison-panel');
     panel.style.display = 'block';
     
@@ -352,17 +402,18 @@ function displayComparison(data) {
     
     // Display metrics
     document.getElementById('ai-results').innerHTML = `
-        <p><strong>Min Distance:</strong> ${data.ai.min_distance.toFixed(1)} m</p>
-        <p><strong>Collision:</strong> ${data.ai.collision ? '❌ Yes' : '✅ No'}</p>
-        <p><strong>Fuel Used:</strong> ${data.ai.fuel_used.toFixed(3)} m/s</p>
+        <p><strong>Min Distance:</strong> ${data.ai?.min_distance?.toFixed(1) || 'N/A'} m</p>
+        <p><strong>Collision:</strong> ${data.ai?.collision ? '❌ Yes' : '✅ No'}</p>
+        <p><strong>Fuel Used:</strong> ${data.ai?.fuel_used?.toFixed(3) || 'N/A'} m/s</p>
         <p class="success">✅ Success!</p>
     `;
     
+    const noAiCollision = data.no_ai?.collision || (data.no_ai?.min_distance !== undefined && data.no_ai.min_distance < 75);
     document.getElementById('no-ai-results').innerHTML = `
-        <p><strong>Min Distance:</strong> ${data.no_ai.min_distance.toFixed(1)} m</p>
-        <p><strong>Collision:</strong> ${data.no_ai.collision ? '❌ Yes' : '✅ No'}</p>
-        <p><strong>Fuel Used:</strong> ${data.no_ai.fuel_used.toFixed(3)} m/s</p>
-        <p class="${data.no_ai.collision ? 'danger' : 'success'}">${data.no_ai.collision ? '❌ Collision!' : '✅ Success'}</p>
+        <p><strong>Min Distance:</strong> ${data.no_ai?.min_distance?.toFixed(1) || 'N/A'} m</p>
+        <p><strong>Collision:</strong> ${noAiCollision ? '💥 YES!' : '✅ No'}</p>
+        <p><strong>Fuel Used:</strong> ${data.no_ai?.fuel_used?.toFixed(3) || 'N/A'} m/s</p>
+        <p class="${noAiCollision ? 'danger' : 'success'}" style="font-weight: bold; font-size: 1.1em;">${noAiCollision ? '💥 CRASHED!' : '✅ Success'}</p>
     `;
 }
 
@@ -425,6 +476,23 @@ function displayBenchmark(data) {
 function animateTrajectory(trajectory, metrics) {
     console.log('Starting animation with trajectory:', trajectory);
     console.log('Metrics:', metrics);
+    console.log('Trajectory keys:', trajectory ? Object.keys(trajectory) : 'trajectory is null');
+    
+    // Safety checks for undefined trajectory components
+    if (!trajectory) {
+        console.error('Trajectory is null or undefined');
+        return;
+    }
+    
+    if (!trajectory.satellite) {
+        console.error('trajectory.satellite is undefined. Available keys:', Object.keys(trajectory));
+        return;
+    }
+    
+    if (!Array.isArray(trajectory.satellite)) {
+        console.error('trajectory.satellite is not an array:', typeof trajectory.satellite, trajectory.satellite);
+        return;
+    }
     
     const collisionRadius = 75;
     const safeDistance = 500;
@@ -432,8 +500,8 @@ function animateTrajectory(trajectory, metrics) {
     const satY = trajectory.satellite.map(p => p[1]);
     const origX = trajectory.original ? trajectory.original.map(p => p[0]) : satX;
     const origY = trajectory.original ? trajectory.original.map(p => p[1]) : satY;
-    const debrisX = trajectory.debris.map(p => p[0]);
-    const debrisY = trajectory.debris.map(p => p[1]);
+    const debrisX = (trajectory.debris && Array.isArray(trajectory.debris)) ? trajectory.debris.map(p => p[0]) : [0];
+    const debrisY = (trajectory.debris && Array.isArray(trajectory.debris)) ? trajectory.debris.map(p => p[1]) : [0];
     const actions = trajectory.actions || [];
     const actionNames = ['Coast', '-Radial', '+Radial', '-Track', '+Track'];
     

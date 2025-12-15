@@ -9,6 +9,11 @@ async function checkStatus() {
         
         const statusIndicator = document.getElementById('status-indicator');
         const modelStatus = document.getElementById('model-status');
+
+        // If the status bar was removed from the UI, skip updates silently
+        if (!statusIndicator || !modelStatus) {
+            return;
+        }
         
         if (data.demo_mode) {
             statusIndicator.textContent = '✅ Demo Mode Ready (no training needed)';

@@ -31,7 +31,8 @@ async function checkStatus() {
 
 // Run a scenario
 async function runScenario() {
-    const scenarioType = document.getElementById('scenario-select').value;
+    const scenarioType = 'head_on';
+    const exampleId = document.getElementById('example-select').value;
     const useAI = document.getElementById('use-ai').checked;
     const runBtn = document.getElementById('run-btn');
     
@@ -43,7 +44,7 @@ async function runScenario() {
         const response = await fetch('/api/run_scenario', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ scenario_type: scenarioType, use_ai: useAI })
+            body: JSON.stringify({ scenario_type: scenarioType, example_id: exampleId, use_ai: useAI })
         });
         
         const data = await response.json();
@@ -63,7 +64,7 @@ async function runScenario() {
         plotTrajectory(data.trajectory, data.metrics);
 
         // Also auto-run comparison and benchmark for the chosen scenario
-        await fetchAndShowComparison(scenarioType);
+        await fetchAndShowComparison(scenarioType, exampleId);
         await benchmarkInference();
         
     } catch (error) {
@@ -268,7 +269,8 @@ function plotTrajectory(trajectory, metrics, animate = true) {
 
 // Compare AI vs No-AI
 async function compareScenarios() {
-    const scenarioType = document.getElementById('scenario-select').value;
+    const scenarioType = 'head_on';
+    const exampleId = document.getElementById('example-select').value;
     const compareBtn = document.getElementById('compare-btn');
     if (compareBtn) {
         compareBtn.disabled = true;
@@ -279,7 +281,7 @@ async function compareScenarios() {
         const response = await fetch('/api/compare', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ scenario_type: scenarioType })
+            body: JSON.stringify({ scenario_type: scenarioType, example_id: exampleId })
         });
         
         const data = await response.json();
@@ -306,12 +308,12 @@ async function compareScenarios() {
 }
 
 // Fetch comparison and display (used automatically after running a scenario)
-async function fetchAndShowComparison(scenarioType) {
+async function fetchAndShowComparison(scenarioType, exampleId) {
     try {
         const response = await fetch('/api/compare', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ scenario_type: scenarioType })
+            body: JSON.stringify({ scenario_type: scenarioType, example_id: exampleId })
         });
 
         const data = await response.json();

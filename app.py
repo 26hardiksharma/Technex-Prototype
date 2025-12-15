@@ -161,6 +161,270 @@ STATIC_DEMO = {
                 'duration_seconds': 100.0
             }
         }
+    },
+    'example_1': {
+        'ai': {
+            'trajectory': {
+                'satellite': [[-500, 0], [-420, 60], [-340, 140], [-260, 220], [-180, 300], [-100, 360], [-20, 400], [60, 430], [140, 450], [220, 460], [300, 470]],
+                'original': [[-500, 0], [-400, 0], [-300, 0], [-200, 0], [-100, 0], [0, 0], [100, 0], [200, 0], [300, 0], [400, 0], [500, 0]],
+                'debris': [[0, 0]] * 11,
+                'actions': [4, 4, 4, 4, 4, 0, 1, 1, 0, 0],
+                'velocities': [[0.44, 0.32], [0.44, 0.32], [0.42, 0.3], [0.40, 0.28], [0.38, 0.26], [0.36, 0.24], [0.34, 0.22], [0.32, 0.20], [0.30, 0.18], [0.28, 0.16], [0.26, 0.14]],
+                'time': [i * 10 for i in range(11)],
+                'distance': [520, 540, 565, 590, 615, 640, 660, 680, 700, 720, 740],
+                'fuel_used': [0.0, 0.03, 0.06, 0.09, 0.12, 0.15, 0.17, 0.18, 0.18, 0.18, 0.18]
+            },
+            'metrics': {
+                'min_distance': 520.0,
+                'collision': False,
+                'success': True,
+                'total_fuel_used': 0.18,
+                'episode_reward': 285.0,
+                'steps': 10,
+                'duration_seconds': 100.0
+            }
+        },
+        'no_ai': {
+            'trajectory': {
+                'satellite': [[-500, 0], [-400, 0], [-300, 0], [-200, 0], [-100, 0], [0, 0], [100, 0], [200, 0], [300, 0], [400, 0], [500, 0]],
+                'original': [[-500, 0], [-400, 0], [-300, 0], [-200, 0], [-100, 0], [0, 0], [100, 0], [200, 0], [300, 0], [400, 0], [500, 0]],
+                'debris': [[0, 0]] * 11,
+                'actions': [0] * 10,
+                'velocities': [[1.0, 0.0]] * 11,
+                'time': [i * 10 for i in range(11)],
+                'distance': [500, 400, 300, 200, 100, 0, 100, 200, 300, 400, 500],
+                'fuel_used': [0.0] * 11
+            },
+            'metrics': {
+                'min_distance': 0.0,
+                'collision': True,
+                'success': False,
+                'total_fuel_used': 0.0,
+                'episode_reward': -500.0,
+                'steps': 10,
+                'duration_seconds': 100.0
+            }
+        }
+    },
+    'example_2': {
+        'ai': {
+            'trajectory': {
+                'satellite': [[-520, -40], [-440, -20], [-360, 0], [-280, 40], [-200, 100], [-120, 180], [-40, 260], [40, 320], [120, 360], [200, 380], [280, 390]],
+                'original': [[-520, -40], [-440, -40], [-360, -40], [-280, -40], [-200, -40], [-120, -40], [-40, -40], [40, -40], [120, -40], [200, -40], [280, -40]],
+                'debris': [[0, 0]] * 11,
+                'actions': [4, 4, 4, 4, 4, 0, 1, 1, 0, 0],
+                'velocities': [[0.46, 0.30], [0.44, 0.28], [0.42, 0.26], [0.40, 0.24], [0.38, 0.22], [0.36, 0.20], [0.34, 0.18], [0.32, 0.16], [0.30, 0.14], [0.28, 0.12], [0.26, 0.10]],
+                'time': [i * 10 for i in range(11)],
+                'distance': [560, 545, 540, 545, 560, 585, 610, 640, 665, 690, 710],
+                'fuel_used': [0.0, 0.03, 0.06, 0.09, 0.12, 0.14, 0.16, 0.17, 0.17, 0.17, 0.17]
+            },
+            'metrics': {
+                'min_distance': 540.0,
+                'collision': False,
+                'success': True,
+                'total_fuel_used': 0.17,
+                'episode_reward': 280.0,
+                'steps': 10,
+                'duration_seconds': 100.0
+            }
+        },
+        'no_ai': {
+            'trajectory': {
+                'satellite': [[-520, -40], [-440, -40], [-360, -40], [-280, -40], [-200, -40], [-120, -40], [-40, -40], [40, -40], [120, -40], [200, -40], [280, -40]],
+                'original': [[-520, -40], [-440, -40], [-360, -40], [-280, -40], [-200, -40], [-120, -40], [-40, -40], [40, -40], [120, -40], [200, -40], [280, -40]],
+                'debris': [[0, 0]] * 11,
+                'actions': [0] * 10,
+                'velocities': [[0.9, 0.05]] * 11,
+                'time': [i * 10 for i in range(11)],
+                'distance': [521, 441, 361, 281, 201, 121, 41, 41, 121, 201, 281],
+                'fuel_used': [0.0] * 11
+            },
+            'metrics': {
+                'min_distance': 41.0,
+                'collision': True,
+                'success': False,
+                'total_fuel_used': 0.0,
+                'episode_reward': -480.0,
+                'steps': 10,
+                'duration_seconds': 100.0
+            }
+        }
+    },
+    'example_3': {
+        'ai': {
+            'trajectory': {
+                'satellite': [[-540, 20], [-460, 40], [-380, 80], [-300, 140], [-220, 220], [-140, 300], [-60, 360], [20, 410], [100, 440], [180, 455], [260, 460]],
+                'original': [[-540, 20], [-460, 20], [-380, 20], [-300, 20], [-220, 20], [-140, 20], [-60, 20], [20, 20], [100, 20], [180, 20], [260, 20]],
+                'debris': [[0, 0]] * 11,
+                'actions': [4, 4, 4, 4, 4, 1, 1, 0, 0, 0],
+                'velocities': [[0.48, 0.32], [0.46, 0.30], [0.44, 0.28], [0.42, 0.26], [0.40, 0.24], [0.36, 0.22], [0.32, 0.20], [0.30, 0.18], [0.28, 0.16], [0.26, 0.14], [0.24, 0.12]],
+                'time': [i * 10 for i in range(11)],
+                'distance': [600, 585, 570, 565, 570, 590, 610, 635, 660, 680, 700],
+                'fuel_used': [0.0, 0.03, 0.06, 0.09, 0.12, 0.15, 0.17, 0.18, 0.18, 0.18, 0.18]
+            },
+            'metrics': {
+                'min_distance': 565.0,
+                'collision': False,
+                'success': True,
+                'total_fuel_used': 0.18,
+                'episode_reward': 290.0,
+                'steps': 10,
+                'duration_seconds': 100.0
+            }
+        },
+        'no_ai': {
+            'trajectory': {
+                'satellite': [[-540, 20], [-460, 20], [-380, 20], [-300, 20], [-220, 20], [-140, 20], [-60, 20], [20, 20], [100, 20], [180, 20], [260, 20]],
+                'original': [[-540, 20], [-460, 20], [-380, 20], [-300, 20], [-220, 20], [-140, 20], [-60, 20], [20, 20], [100, 20], [180, 20], [260, 20]],
+                'debris': [[0, 0]] * 11,
+                'actions': [0] * 10,
+                'velocities': [[1.1, 0.0]] * 11,
+                'time': [i * 10 for i in range(11)],
+                'distance': [540, 440, 340, 240, 140, 40, 60, 140, 240, 340, 440],
+                'fuel_used': [0.0] * 11
+            },
+            'metrics': {
+                'min_distance': 40.0,
+                'collision': True,
+                'success': False,
+                'total_fuel_used': 0.0,
+                'episode_reward': -480.0,
+                'steps': 10,
+                'duration_seconds': 100.0
+            }
+        }
+    },
+    'example_4': {
+        'ai': {
+            'trajectory': {
+                'satellite': [[-520, 100], [-440, 140], [-360, 180], [-280, 220], [-200, 260], [-120, 300], [-40, 320], [40, 330], [120, 335], [200, 338], [280, 340]],
+                'original': [[-520, 100], [-440, 100], [-360, 100], [-280, 100], [-200, 100], [-120, 100], [-40, 100], [40, 100], [120, 100], [200, 100], [280, 100]],
+                'debris': [[0, 0]] * 11,
+                'actions': [4, 4, 4, 4, 0, 1, 1, 0, 0, 0],
+                'velocities': [[0.42, 0.30], [0.42, 0.30], [0.40, 0.28], [0.38, 0.26], [0.36, 0.24], [0.34, 0.22], [0.32, 0.20], [0.30, 0.18], [0.28, 0.16], [0.26, 0.14], [0.24, 0.12]],
+                'time': [i * 10 for i in range(11)],
+                'distance': [530, 540, 555, 575, 600, 625, 645, 660, 675, 690, 705],
+                'fuel_used': [0.0, 0.02, 0.05, 0.08, 0.10, 0.12, 0.14, 0.15, 0.15, 0.15, 0.15]
+            },
+            'metrics': {
+                'min_distance': 530.0,
+                'collision': False,
+                'success': True,
+                'total_fuel_used': 0.15,
+                'episode_reward': 275.0,
+                'steps': 10,
+                'duration_seconds': 100.0
+            }
+        },
+        'no_ai': {
+            'trajectory': {
+                'satellite': [[-520, 100], [-440, 100], [-360, 100], [-280, 100], [-200, 100], [-120, 100], [-40, 100], [40, 100], [120, 100], [200, 100], [280, 100]],
+                'original': [[-520, 100], [-440, 100], [-360, 100], [-280, 100], [-200, 100], [-120, 100], [-40, 100], [40, 100], [120, 100], [200, 100], [280, 100]],
+                'debris': [[0, 0]] * 11,
+                'actions': [0] * 10,
+                'velocities': [[0.9, 0.05]] * 11,
+                'time': [i * 10 for i in range(11)],
+                'distance': [530, 430, 330, 230, 130, 30, 70, 170, 270, 370, 470],
+                'fuel_used': [0.0] * 11
+            },
+            'metrics': {
+                'min_distance': 30.0,
+                'collision': True,
+                'success': False,
+                'total_fuel_used': 0.0,
+                'episode_reward': -480.0,
+                'steps': 10,
+                'duration_seconds': 100.0
+            }
+        }
+    },
+    'example_5': {
+        'ai': {
+            'trajectory': {
+                'satellite': [[-500, -120], [-420, -80], [-340, -20], [-260, 60], [-180, 140], [-100, 200], [-20, 240], [60, 260], [140, 270], [220, 272], [300, 274]],
+                'original': [[-500, -120], [-420, -120], [-340, -120], [-260, -120], [-180, -120], [-100, -120], [-20, -120], [60, -120], [140, -120], [220, -120], [300, -120]],
+                'debris': [[0, 0]] * 11,
+                'actions': [3, 3, 4, 4, 0, 1, 1, 0, 0, 0],
+                'velocities': [[0.40, 0.30], [0.40, 0.30], [0.38, 0.28], [0.36, 0.26], [0.34, 0.24], [0.32, 0.22], [0.30, 0.20], [0.28, 0.18], [0.26, 0.16], [0.24, 0.14], [0.22, 0.12]],
+                'time': [i * 10 for i in range(11)],
+                'distance': [514, 500, 494, 505, 530, 560, 585, 605, 620, 635, 650],
+                'fuel_used': [0.0, 0.02, 0.05, 0.08, 0.10, 0.12, 0.14, 0.15, 0.15, 0.15, 0.15]
+            },
+            'metrics': {
+                'min_distance': 514.0,
+                'collision': False,
+                'success': True,
+                'total_fuel_used': 0.15,
+                'episode_reward': 265.0,
+                'steps': 10,
+                'duration_seconds': 100.0
+            }
+        },
+        'no_ai': {
+            'trajectory': {
+                'satellite': [[-500, -120], [-420, -120], [-340, -120], [-260, -120], [-180, -120], [-100, -120], [-20, -120], [60, -120], [140, -120], [220, -120], [300, -120]],
+                'original': [[-500, -120], [-420, -120], [-340, -120], [-260, -120], [-180, -120], [-100, -120], [-20, -120], [60, -120], [140, -120], [220, -120], [300, -120]],
+                'debris': [[0, 0]] * 11,
+                'actions': [0] * 10,
+                'velocities': [[0.9, 0.05]] * 11,
+                'time': [i * 10 for i in range(11)],
+                'distance': [514, 414, 314, 214, 114, 14, 86, 186, 286, 386, 486],
+                'fuel_used': [0.0] * 11
+            },
+            'metrics': {
+                'min_distance': 14.0,
+                'collision': True,
+                'success': False,
+                'total_fuel_used': 0.0,
+                'episode_reward': -480.0,
+                'steps': 10,
+                'duration_seconds': 100.0
+            }
+        }
+    },
+    'example_6': {
+        'ai': {
+            'trajectory': {
+                'satellite': [[-520, 200], [-440, 220], [-360, 240], [-280, 260], [-200, 280], [-120, 300], [-40, 320], [40, 340], [120, 360], [200, 380], [280, 400]],
+                'original': [[-520, 200], [-440, 200], [-360, 200], [-280, 200], [-200, 200], [-120, 200], [-40, 200], [40, 200], [120, 200], [200, 200], [280, 200]],
+                'debris': [[0, 0]] * 11,
+                'actions': [4, 4, 4, 4, 0, 1, 1, 0, 0, 0],
+                'velocities': [[0.42, 0.30], [0.42, 0.30], [0.40, 0.28], [0.38, 0.26], [0.36, 0.24], [0.34, 0.22], [0.32, 0.20], [0.30, 0.18], [0.28, 0.16], [0.26, 0.14], [0.24, 0.12]],
+                'time': [i * 10 for i in range(11)],
+                'distance': [560, 570, 585, 600, 620, 640, 660, 680, 700, 720, 740],
+                'fuel_used': [0.0, 0.02, 0.05, 0.08, 0.10, 0.12, 0.14, 0.15, 0.15, 0.15, 0.15]
+            },
+            'metrics': {
+                'min_distance': 560.0,
+                'collision': False,
+                'success': True,
+                'total_fuel_used': 0.15,
+                'episode_reward': 275.0,
+                'steps': 10,
+                'duration_seconds': 100.0
+            }
+        },
+        'no_ai': {
+            'trajectory': {
+                'satellite': [[-520, 200], [-440, 200], [-360, 200], [-280, 200], [-200, 200], [-120, 200], [-40, 200], [40, 200], [120, 200], [200, 200], [280, 200]],
+                'original': [[-520, 200], [-440, 200], [-360, 200], [-280, 200], [-200, 200], [-120, 200], [-40, 200], [40, 200], [120, 200], [200, 200], [280, 200]],
+                'debris': [[0, 0]] * 11,
+                'actions': [0] * 10,
+                'velocities': [[0.9, 0.05]] * 11,
+                'time': [i * 10 for i in range(11)],
+                'distance': [560, 460, 360, 260, 160, 60, 60, 160, 260, 360, 460],
+                'fuel_used': [0.0] * 11
+            },
+            'metrics': {
+                'min_distance': 60.0,
+                'collision': True,
+                'success': False,
+                'total_fuel_used': 0.0,
+                'episode_reward': -470.0,
+                'steps': 10,
+                'duration_seconds': 100.0
+            }
+        }
     }
 }
 
@@ -182,11 +446,12 @@ def load_model():
         return False
 
 
-def build_static_run(scenario_type: str, use_ai: bool):
+def build_static_run(scenario_type: str, use_ai: bool, example_id: str | None = None):
     """Return a canned trajectory/metrics bundle for demo mode."""
     import random
     
-    scenario = STATIC_DEMO.get(scenario_type, STATIC_DEMO['random'])
+    scenario_key = example_id or scenario_type or 'head_on'
+    scenario = STATIC_DEMO.get(scenario_key, STATIC_DEMO['head_on'])
     key = 'ai' if use_ai else 'no_ai'
     selected = scenario[key]
     
@@ -243,14 +508,16 @@ def build_static_run(scenario_type: str, use_ai: bool):
     return {
         'trajectory': selected['trajectory'],
         'metrics': selected['metrics'],
-        'scenario_type': scenario_type,
+        'scenario_type': 'head_on',
+        'example_id': scenario_key,
         'use_ai': use_ai
     }
 
 
-def build_static_compare(scenario_type: str):
+def build_static_compare(scenario_type: str, example_id: str | None = None):
     """Return canned AI vs no-AI results for demo mode."""
-    scenario = STATIC_DEMO.get(scenario_type, STATIC_DEMO['random'])
+    scenario_key = example_id or scenario_type or 'head_on'
+    scenario = STATIC_DEMO.get(scenario_key, STATIC_DEMO['head_on'])
     return {
         'ai': scenario['ai'],
         'no_ai': scenario['no_ai']
@@ -306,14 +573,17 @@ def run_scenario():
     Returns trajectory data and metrics.
     """
     data = request.json
-    scenario_type = data.get('scenario_type', 'random')
+    example_id = data.get('example_id')
+    scenario_type = 'head_on'
     use_ai = data.get('use_ai', True)
     animate = data.get('animate', False)
 
+    scenario_key = example_id or scenario_type
+
     # Demo mode: serve canned collision data when model is missing OR when use_ai=false
     # This ensures guaranteed collisions for demonstration purposes when AI is off
-    if model is None or not use_ai:
-        return jsonify(build_static_run(scenario_type, use_ai))
+    if model is None or not use_ai or example_id:
+        return jsonify(build_static_run(scenario_type, use_ai, example_id))
     
     # Create environment with specified scenario
     test_env = OrbitalDebrisEnv(
@@ -478,17 +748,16 @@ def benchmark():
 def compare():
     """Compare AI vs no-AI (coast) on same scenario."""
     data = request.json
-    scenario_type = data.get('scenario_type', 'random')
+    example_id = data.get('example_id')
+    scenario_type = 'head_on'
 
     # Demo mode
-    if model is None:
-        return jsonify(build_static_compare(scenario_type))
+    if model is None or example_id:
+        return jsonify(build_static_compare(scenario_type, example_id))
     
     # Generate initial state
     if scenario_type == 'head_on':
         initial_state = scenario_gen.generate_head_on_encounter()
-    elif scenario_type == 'crossing':
-        initial_state = scenario_gen.generate_crossing_encounter()
     else:
         initial_state = scenario_gen.generate_random_encounter()
     

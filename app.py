@@ -184,9 +184,62 @@ def load_model():
 
 def build_static_run(scenario_type: str, use_ai: bool):
     """Return a canned trajectory/metrics bundle for demo mode."""
+    import random
+    
     scenario = STATIC_DEMO.get(scenario_type, STATIC_DEMO['random'])
     key = 'ai' if use_ai else 'no_ai'
     selected = scenario[key]
+    
+    # Generate varied collision scenarios when use_ai=false
+    if not use_ai:
+        # Create 5 different collision variations on the fly
+        variation = random.randint(1, 5)
+        
+        if variation == 1:
+            # Diagonal approach from top-left
+            satellite = [[-400, -400], [-320, -320], [-240, -240], [-160, -160], [-80, -80], [0, 0], [80, 80], [160, 160], [240, 240], [320, 320], [400, 400]]
+        elif variation == 2:
+            # Diagonal approach from top-right
+            satellite = [[400, -400], [320, -320], [240, -240], [160, -160], [80, -80], [0, 0], [-80, 80], [-160, 160], [-240, 240], [-320, 320], [-400, 400]]
+        elif variation == 3:
+            # Curved approach from left
+            satellite = [[-500, -100], [-400, -80], [-300, -60], [-200, -40], [-100, -20], [0, 0], [100, 20], [200, 40], [300, 60], [400, 80], [500, 100]]
+        elif variation == 4:
+            # Steep vertical approach
+            satellite = [[-50, -600], [-40, -480], [-30, -360], [-20, -240], [-10, -120], [0, 0], [10, 120], [20, 240], [30, 360], [40, 480], [50, 600]]
+        else:
+            # Shallow horizontal approach
+            satellite = [[-600, -50], [-480, -40], [-360, -30], [-240, -20], [-120, -10], [0, 0], [120, 10], [240, 20], [360, 30], [480, 40], [600, 50]]
+        
+        # Calculate distances for this trajectory
+        distances = [np.sqrt(x**2 + y**2) for x, y in satellite]
+        
+        varied_traj = {
+            'satellite': satellite,
+            'original': satellite.copy(),
+            'debris': [[0, 0]] * len(satellite),
+            'actions': [0] * (len(satellite) - 1),
+            'velocities': [[0.5, 0.5]] * len(satellite),
+            'time': [i * 10 for i in range(len(satellite))],
+            'distance': distances,
+            'fuel_used': [0.0] * len(satellite)
+        }
+        
+        return {
+            'trajectory': varied_traj,
+            'metrics': {
+                'min_distance': 0.0,
+                'collision': True,
+                'success': False,
+                'total_fuel_used': 0.0,
+                'episode_reward': -500.0,
+                'steps': len(satellite) - 1,
+                'duration_seconds': (len(satellite) - 1) * 10.0
+            },
+            'scenario_type': scenario_type,
+            'use_ai': use_ai
+        }
+    
     return {
         'trajectory': selected['trajectory'],
         'metrics': selected['metrics'],

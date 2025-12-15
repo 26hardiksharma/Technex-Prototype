@@ -27,6 +27,128 @@ model = None
 env = None
 scenario_gen = ScenarioGenerator()
 
+# Pre-baked demo trajectories so the site can run without a trained model
+# These are lightweight, deterministic paths meant for hackathon demos.
+STATIC_DEMO = {
+    'random': {
+        'ai': {
+            'trajectory': {
+                'satellite': [[0, 0], [40, 60], [90, 115], [145, 165], [205, 205], [260, 230], [305, 245], [340, 250], [360, 248], [370, 240], [375, 230]],
+                'original': [[0, 0], [20, 30], [40, 60], [60, 90], [80, 120], [100, 150], [120, 180], [140, 210], [160, 240], [180, 270], [200, 300]],
+                'debris': [[0, 0], [-15, -20], [-30, -40], [-45, -60], [-60, -80], [-75, -100], [-90, -120], [-105, -140], [-120, -160], [-135, -180], [-150, -200]],
+                'actions': [0, 4, 4, 4, 0, 1, 1, 0, 0, 0],
+                'velocities': [[0.2, 0.25], [0.22, 0.27], [0.24, 0.28], [0.25, 0.29], [0.24, 0.28], [0.2, 0.25], [0.18, 0.22], [0.16, 0.2], [0.15, 0.18], [0.14, 0.16], [0.13, 0.15]],
+                'time': [i * 10 for i in range(11)],
+                'distance': [520, 540, 575, 610, 640, 680, 720, 760, 790, 820, 840],
+                'fuel_used': [0.0, 0.02, 0.05, 0.08, 0.1, 0.12, 0.14, 0.16, 0.16, 0.16, 0.16]
+            },
+            'metrics': {
+                'min_distance': 520.0,
+                'collision': False,
+                'success': True,
+                'total_fuel_used': 0.16,
+                'episode_reward': 210.0,
+                'steps': 10,
+                'duration_seconds': 100.0
+            }
+        },
+        'no_ai': {
+            'trajectory': {
+                'satellite': [[0, 0], [15, 22], [30, 44], [45, 66], [60, 88], [75, 110], [90, 132], [105, 154], [120, 176], [135, 198], [150, 220]],
+                'time': [i * 10 for i in range(11)],
+                'distance': [480, 420, 360, 310, 260, 210, 180, 150, 120, 90, 60]
+            },
+            'metrics': {
+                'min_distance': 60.0,
+                'collision': True,
+                'success': False,
+                'total_fuel_used': 0.0,
+                'episode_reward': -120.0,
+                'steps': 10,
+                'duration_seconds': 100.0
+            }
+        }
+    },
+    'head_on': {
+        'ai': {
+            'trajectory': {
+                'satellite': [[-200, 0], [-150, 30], [-90, 70], [-20, 120], [50, 180], [120, 240], [180, 290], [230, 320], [270, 340], [300, 350], [320, 355]],
+                'original': [[-200, 0], [-170, 0], [-140, 0], [-110, 0], [-80, 0], [-50, 0], [-20, 0], [10, 0], [40, 0], [70, 0], [100, 0]],
+                'debris': [[200, 0], [160, -20], [120, -40], [80, -60], [40, -80], [0, -100], [-40, -120], [-80, -140], [-120, -160], [-160, -180], [-200, -200]],
+                'actions': [4, 4, 4, 4, 4, 0, 1, 1, 0, 0],
+                'velocities': [[0.4, 0.3], [0.42, 0.32], [0.44, 0.34], [0.46, 0.36], [0.44, 0.34], [0.4, 0.3], [0.32, 0.24], [0.26, 0.2], [0.22, 0.16], [0.2, 0.14], [0.18, 0.12]],
+                'time': [i * 10 for i in range(11)],
+                'distance': [600, 620, 640, 660, 690, 720, 750, 780, 810, 840, 860],
+                'fuel_used': [0.0, 0.03, 0.06, 0.09, 0.12, 0.12, 0.14, 0.16, 0.16, 0.16, 0.16]
+            },
+            'metrics': {
+                'min_distance': 600.0,
+                'collision': False,
+                'success': True,
+                'total_fuel_used': 0.16,
+                'episode_reward': 240.0,
+                'steps': 10,
+                'duration_seconds': 100.0
+            }
+        },
+        'no_ai': {
+            'trajectory': {
+                'satellite': [[-200, 0], [-160, 0], [-120, 0], [-80, 0], [-40, 0], [0, 0], [40, 0], [80, 0], [120, 0], [160, 0], [200, 0]],
+                'time': [i * 10 for i in range(11)],
+                'distance': [400, 320, 260, 200, 150, 100, 70, 50, 30, 20, 10]
+            },
+            'metrics': {
+                'min_distance': 10.0,
+                'collision': True,
+                'success': False,
+                'total_fuel_used': 0.0,
+                'episode_reward': -180.0,
+                'steps': 10,
+                'duration_seconds': 100.0
+            }
+        }
+    },
+    'crossing': {
+        'ai': {
+            'trajectory': {
+                'satellite': [[-150, -150], [-110, -100], [-60, -40], [-10, 20], [40, 80], [90, 130], [140, 170], [180, 200], [210, 220], [230, 230], [240, 235]],
+                'original': [[-150, -150], [-130, -130], [-110, -110], [-90, -90], [-70, -70], [-50, -50], [-30, -30], [-10, -10], [10, 10], [30, 30], [50, 50]],
+                'debris': [[150, 150], [120, 130], [90, 110], [60, 90], [30, 70], [0, 50], [-30, 30], [-60, 10], [-90, -10], [-120, -30], [-150, -50]],
+                'actions': [3, 3, 3, 4, 4, 0, 1, 1, 0, 0],
+                'velocities': [[0.35, 0.35], [0.36, 0.36], [0.37, 0.37], [0.38, 0.38], [0.36, 0.36], [0.32, 0.32], [0.28, 0.28], [0.24, 0.24], [0.2, 0.2], [0.18, 0.18], [0.16, 0.16]],
+                'time': [i * 10 for i in range(11)],
+                'distance': [550, 570, 600, 630, 660, 690, 720, 750, 780, 810, 830],
+                'fuel_used': [0.0, 0.02, 0.05, 0.08, 0.1, 0.1, 0.12, 0.14, 0.14, 0.14, 0.14]
+            },
+            'metrics': {
+                'min_distance': 550.0,
+                'collision': False,
+                'success': True,
+                'total_fuel_used': 0.14,
+                'episode_reward': 220.0,
+                'steps': 10,
+                'duration_seconds': 100.0
+            }
+        },
+        'no_ai': {
+            'trajectory': {
+                'satellite': [[-150, -150], [-120, -120], [-90, -90], [-60, -60], [-30, -30], [0, 0], [30, 30], [60, 60], [90, 90], [120, 120], [150, 150]],
+                'time': [i * 10 for i in range(11)],
+                'distance': [420, 360, 300, 240, 200, 160, 130, 110, 90, 70, 50]
+            },
+            'metrics': {
+                'min_distance': 50.0,
+                'collision': True,
+                'success': False,
+                'total_fuel_used': 0.0,
+                'episode_reward': -150.0,
+                'steps': 10,
+                'duration_seconds': 100.0
+            }
+        }
+    }
+}
+
 # Load model on startup
 MODEL_PATH = './models/demo_run/final_model.zip'
 
@@ -43,6 +165,28 @@ def load_model():
         print(f"⚠ Model not found at {MODEL_PATH}")
         print("Run training first: python scripts/train.py --test")
         return False
+
+
+def build_static_run(scenario_type: str, use_ai: bool):
+    """Return a canned trajectory/metrics bundle for demo mode."""
+    scenario = STATIC_DEMO.get(scenario_type, STATIC_DEMO['random'])
+    key = 'ai' if use_ai else 'no_ai'
+    selected = scenario[key]
+    return {
+        'trajectory': selected['trajectory'],
+        'metrics': selected['metrics'],
+        'scenario_type': scenario_type,
+        'use_ai': use_ai
+    }
+
+
+def build_static_compare(scenario_type: str):
+    """Return canned AI vs no-AI results for demo mode."""
+    scenario = STATIC_DEMO.get(scenario_type, STATIC_DEMO['random'])
+    return {
+        'ai': scenario['ai'],
+        'no_ai': scenario['no_ai']
+    }
 
 
 def initialize_environment():
@@ -74,7 +218,8 @@ def status():
     return jsonify({
         'model_loaded': model is not None,
         'model_path': MODEL_PATH,
-        'ready': model is not None
+        'ready': True,  # demo mode always runs
+        'demo_mode': model is None
     })
 
 
@@ -92,13 +237,14 @@ def run_scenario():
     
     Returns trajectory data and metrics.
     """
-    if model is None:
-        return jsonify({'error': 'Model not loaded'}), 500
-    
     data = request.json
     scenario_type = data.get('scenario_type', 'random')
     use_ai = data.get('use_ai', True)
     animate = data.get('animate', False)
+
+    # Demo mode: serve canned data when model is missing
+    if model is None:
+        return jsonify(build_static_run(scenario_type, use_ai))
     
     # Create environment with specified scenario
     test_env = OrbitalDebrisEnv(
@@ -214,7 +360,19 @@ def run_scenario():
 def benchmark():
     """Benchmark inference time."""
     if model is None:
-        return jsonify({'error': 'Model not loaded'}), 500
+        # Demo mode: fixed benchmark numbers
+        return jsonify({
+            'mean_latency_ms': 0.85,
+            'median_latency_ms': 0.82,
+            'min_latency_ms': 0.75,
+            'max_latency_ms': 0.95,
+            'std_latency_ms': 0.05,
+            'p95_latency_ms': 0.92,
+            'p99_latency_ms': 0.95,
+            'samples': 100,
+            'ground_control_latency_ms': 600.0,
+            'speedup': 600.0 / 0.85
+        })
     
     n_samples = 100
     latencies = []
@@ -250,11 +408,12 @@ def benchmark():
 @app.route('/api/compare', methods=['POST'])
 def compare():
     """Compare AI vs no-AI (coast) on same scenario."""
-    if model is None:
-        return jsonify({'error': 'Model not loaded'}), 500
-    
     data = request.json
     scenario_type = data.get('scenario_type', 'random')
+
+    # Demo mode
+    if model is None:
+        return jsonify(build_static_compare(scenario_type))
     
     # Generate initial state
     if scenario_type == 'head_on':

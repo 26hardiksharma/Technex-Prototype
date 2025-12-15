@@ -9,7 +9,11 @@ async function checkStatus() {
         const statusIndicator = document.getElementById('status-indicator');
         const modelStatus = document.getElementById('model-status');
         
-        if (data.ready) {
+        if (data.demo_mode) {
+            statusIndicator.textContent = '✅ Demo Mode Ready (no training needed)';
+            statusIndicator.className = 'status-ready';
+            modelStatus.textContent = 'Using pre-baked trajectories for instant demo';
+        } else if (data.ready) {
             statusIndicator.textContent = '✅ System Ready';
             statusIndicator.className = 'status-ready';
             modelStatus.textContent = 'Model Loaded';
@@ -42,6 +46,10 @@ async function runScenario() {
         });
         
         const data = await response.json();
+
+        if (data.error) {
+            throw new Error(data.error);
+        }
         
         // Display results
         displayResults(data);
@@ -49,6 +57,10 @@ async function runScenario() {
         // Animate trajectory in real-time
         runBtn.textContent = '🎬 Animating...';
         plotTrajectory(data.trajectory, data.metrics);
+
+        // Also auto-run comparison and benchmark for the chosen scenario
+        await fetchAndShowComparison(scenarioType);
+        await benchmarkInference();
         
     } catch (error) {
         console.error('Error running scenario:', error);
@@ -220,9 +232,10 @@ function plotTrajectory(trajectory, metrics, animate = true) {
 async function compareScenarios() {
     const scenarioType = document.getElementById('scenario-select').value;
     const compareBtn = document.getElementById('compare-btn');
-    
-    compareBtn.disabled = true;
-    compareBtn.textContent = '⏳ Comparing...';
+    if (compareBtn) {
+        compareBtn.disabled = true;
+        compareBtn.textContent = '⏳ Comparing...';
+    }
     
     try {
         const response = await fetch('/api/compare', {
@@ -232,16 +245,46 @@ async function compareScenarios() {
         });
         
         const data = await response.json();
+
+        if (data.error) {
+            throw new Error(data.error);
+        }
         
         // Display comparison
         displayComparison(data);
+
+        // Auto-run benchmark view for quick demo
+        benchmarkInference();
         
     } catch (error) {
         console.error('Error comparing scenarios:', error);
         alert('Error comparing scenarios. Check console for details.');
     } finally {
-        compareBtn.disabled = false;
-        compareBtn.textContent = '📊 Compare AI vs No-AI';
+        if (compareBtn) {
+            compareBtn.disabled = false;
+            compareBtn.textContent = '📊 Compare AI vs No-AI';
+        }
+    }
+}
+
+// Fetch comparison and display (used automatically after running a scenario)
+async function fetchAndShowComparison(scenarioType) {
+    try {
+        const response = await fetch('/api/compare', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ scenario_type: scenarioType })
+        });
+
+        const data = await response.json();
+
+        if (data.error) {
+            throw new Error(data.error);
+        }
+
+        displayComparison(data);
+    } catch (error) {
+        console.error('Error auto-comparing scenarios:', error);
     }
 }
 
@@ -327,8 +370,10 @@ function displayComparison(data) {
 async function benchmarkInference() {
     const benchBtn = document.getElementById('benchmark-btn');
     
-    benchBtn.disabled = true;
-    benchBtn.textContent = '⏳ Benchmarking...';
+    if (benchBtn) {
+        benchBtn.disabled = true;
+        benchBtn.textContent = '⏳ Benchmarking...';
+    }
     
     try {
         const response = await fetch('/api/benchmark');
@@ -341,8 +386,10 @@ async function benchmarkInference() {
         console.error('Error benchmarking:', error);
         alert('Error benchmarking. Check console for details.');
     } finally {
-        benchBtn.disabled = false;
-        benchBtn.textContent = '⚡ Benchmark Inference';
+        if (benchBtn) {
+            benchBtn.disabled = false;
+            benchBtn.textContent = '⚡ Benchmark Inference';
+        }
     }
 }
 
@@ -759,6 +806,4 @@ document.addEventListener('DOMContentLoaded', () => {
     checkStatus();
     
     document.getElementById('run-btn').addEventListener('click', runScenario);
-    document.getElementById('compare-btn').addEventListener('click', compareScenarios);
-    document.getElementById('benchmark-btn').addEventListener('click', benchmarkInference);
 });
